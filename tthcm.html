@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Bài tập kéo thả</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .container { display: flex; gap: 30px; }
+    .list, .dropzones { width: 45%; }
+    .item {
+      background-color: #f2f2f2;
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 5px;
+      cursor: grab;
+    }
+    .dropzone {
+      border: 2px dashed #999;
+      padding: 10px;
+      margin: 10px 0;
+      min-height: 50px;
+      border-radius: 5px;
+    }
+    .dropzone.over { background-color: #e0ffe0; }
+    .correct { background-color: #d4edda; border-color: #28a745; }
+    .incorrect { background-color: #f8d7da; border-color: #dc3545; }
+    .answer {
+      font-size: 14px;
+      color: #333;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h3>Câu 27: Kéo thả các khái niệm khớp với phát biểu</h3>
+
+<div class="container">
+  <div class="list">
+    <h4>Đáp án</h4>
+    <div class="item" draggable="true" id="A">A. Có tư tưởng và tác phong XHCN</div>
+    <div class="item" draggable="true" id="B">B. Do giai cấp nông dân lãnh đạo</div>
+    <div class="item" draggable="true" id="C">C. Văn hóa đại chúng</div>
+    <div class="item" draggable="true" id="D">D. Nền kinh tế phát triển</div>
+    <div class="item" draggable="true" id="E">E. Con người xã hội chủ nghĩa</div>
+    <div class="item" draggable="true" id="F">F. Do nhân dân làm chủ</div>
+    <div class="item" draggable="true" id="G">G. Xây dựng được chế độ dân chủ</div>
+  </div>
+
+  <div class="dropzones">
+    <h4>Kéo thả vào đây</h4>
+    <p>- Đặc trưng của chủ nghĩa xã hội:</p>
+    <div class="dropzone" id="dz1"></div>
+    <div class="answer" id="ans1"></div>
+
+    <p>- Động lực xây dựng chủ nghĩa xã hội:</p>
+    <div class="dropzone" id="dz2"></div>
+    <div class="answer" id="ans2"></div>
+
+    <p>- Mục tiêu chính trị của chủ nghĩa xã hội:</p>
+    <div class="dropzone" id="dz3"></div>
+    <div class="answer" id="ans3"></div>
+
+    <p>- Yếu tố xây dựng con người chủ nghĩa xã hội:</p>
+    <div class="dropzone" id="dz4"></div>
+    <div class="answer" id="ans4"></div>
+  </div>
+</div>
+
+<button onclick="submitAnswers()">Nộp</button>
+
+<script>
+  const items = document.querySelectorAll('.item');
+  const zones = document.querySelectorAll('.dropzone');
+
+  // Đáp án đúng
+  const correctAnswers = {
+    dz1: "F",
+    dz2: "D",
+    dz3: "G",
+    dz4: "A"
+  };
+
+  // Chữ mô tả đáp án
+  const answerText = {
+    F: "Do nhân dân làm chủ",
+    D: "Nền kinh tế phát triển",
+    G: "Xây dựng được chế độ dân chủ",
+    A: "Có tư tưởng và tác phong XHCN"
+  };
+
+  items.forEach(item => {
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', item.id);
+    });
+  });
+
+  zones.forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.classList.add('over');
+    });
+    zone.addEventListener('dragleave', () => {
+      zone.classList.remove('over');
+    });
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('over');
+      const id = e.dataTransfer.getData('text/plain');
+      const draggedItem = document.getElementById(id);
+      if (draggedItem) {
+        zone.innerHTML = '';
+        zone.appendChild(draggedItem);
+      }
+    });
+  });
+
+  function submitAnswers() {
+    zones.forEach(zone => {
+      zone.classList.remove('correct', 'incorrect');
+      const ansDiv = document.getElementById("ans" + zone.id.replace("dz",""));
+      ansDiv.textContent = ""; // clear cũ
+      const child = zone.firstElementChild;
+      if (child) {
+        if (child.id === correctAnswers[zone.id]) {
+          zone.classList.add('correct');
+        } else {
+          zone.classList.add('incorrect');
+          ansDiv.textContent = "Đáp án đúng: " + answerText[correctAnswers[zone.id]];
+        }
+      } else {
+        zone.classList.add('incorrect');
+        ansDiv.textContent = "Đáp án đúng: " + answerText[correctAnswers[zone.id]];
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
